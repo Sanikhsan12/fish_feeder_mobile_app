@@ -41,8 +41,12 @@ class _RegisterPageState extends State<RegisterPage> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Registrasi Berhasil, User Id Anda : ${user.uid}'),
+              content: Text('Registrasi Berhasil, Silahkan Login Ulang.'),
             ),
+          );
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => LoginPage()),
           );
         }
       }
@@ -54,6 +58,10 @@ class _RegisterPageState extends State<RegisterPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Email Sudah Terdaftar. Silahkan Login.')),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
         );
       }
     }
