@@ -1,16 +1,24 @@
-# fish_feeder_mobile_app
+# Fish Feeder Mobile APP
 
-A new Flutter project.
+aplikasi controling IOT berbasis flutter
 
-## Getting Started
+## Pages
 
-This project is a starting point for a Flutter application.
+- Splash Screen
+- Autentication Page ( login, register, forgot )
+- Home Page ( main container for another pages with navigation bar )
+- Controling Page ( manual feeding, control UV, food level status, last time feed time temp )
+- Schedule Page ( automatic schedule feeder, CRUD schedule )
+- New Schedule Page ( form for creating new schedule )
+- History Page ( feeding history page )
+- Profile Page ( user profile page )
 
-A few resources to get you started if this is your first Flutter project:
+## Tech Stack
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Flutter
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Dependency
+
+- Cupertino Icon
+- Flutter Dotenv
+- Flutter HTTP
