@@ -24,3 +24,5 @@ aplikasi controling IOT berbasis flutter
 - Flutter Dotenv
 - Flutter HTTP
 - Loading Animation Widget
+- Firebase Core
+- Firaebase Auth
