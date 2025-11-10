@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import './login_page.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -35,12 +36,13 @@ class _SplashScreenState extends State<SplashScreen> {
             fit: BoxFit.cover,
           ),
         ),
-        child: const Padding(
+        child: Padding(
           padding: EdgeInsets.only(bottom: 80.0),
           child: Align(
             alignment: Alignment.bottomCenter,
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            child: LoadingAnimationWidget.waveDots(
+              color: Colors.white,
+              size: 50,
             ),
           ),
         ),
