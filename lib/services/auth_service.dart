@@ -17,4 +17,18 @@ class AuthService {
       throw Exception(e.toString());
     }
   }
+
+  // ! Login
+  Future<User?> signInWithEmailAndPassword(
+      String email, String password) async {
+    try {
+      UserCredential result = await _auth.signInWithEmailAndPassword(
+          email: email.trim(), password: password.trim());
+      return result.user;
+    } on FirebaseException catch (e) {
+      throw Exception(e.message);
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
 }
