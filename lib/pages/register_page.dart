@@ -37,11 +37,12 @@ class _RegisterPageState extends State<RegisterPage> {
 
       // ! Cek user
       if (user != null) {
+        _clearFields();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-                content:
-                    Text('Registrasi Berhasil, User Id Anda : ${user.uid}')),
+              content: Text('Registrasi Berhasil, User Id Anda : ${user.uid}'),
+            ),
           );
         }
       }
@@ -56,6 +57,12 @@ class _RegisterPageState extends State<RegisterPage> {
         );
       }
     }
+  }
+
+  // ! bersihkan text field
+  void _clearFields() {
+    _emailController.clear();
+    _passwordController.clear();
   }
 
   // ! Dispose
