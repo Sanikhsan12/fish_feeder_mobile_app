@@ -16,9 +16,11 @@ aplikasi controling IOT berbasis flutter
 ## Tech Stack
 
 - Flutter
+- Firebase
 
 ## Dependency
 
 - Cupertino Icon
 - Flutter Dotenv
 - Flutter HTTP
+- Loading Animation Widget
