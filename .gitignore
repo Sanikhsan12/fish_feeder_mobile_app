@@ -43,8 +43,12 @@ app.*.map.json
 /android/app/release
 
 
-// Env
+# Env
 .env
 
-// VS Code
+# VS Code
 .vscode/
+
+# Google Services
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
