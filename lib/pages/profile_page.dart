@@ -7,10 +7,10 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Controlling Page'),
+        title: const Text('Profile Page'),
       ),
       body: const Center(
-        child: Text('Welcome to the Controlling Page!'),
+        child: Text('Welcome to the Profile Page!'),
       ),
     );
   }
