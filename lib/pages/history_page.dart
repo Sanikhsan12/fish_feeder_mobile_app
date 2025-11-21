@@ -11,19 +11,19 @@ class HistoryPage extends StatefulWidget {
 
 class _HistoryPageState extends State<HistoryPage> {
   final HistoryService historyService = HistoryService();
-  int _page = 1;
+  final ScrollController _scrollController = ScrollController();
   bool _isLoading = false;
   List<HistoryModel> _histories = [];
-  final int _limit = 5; // gunakan limit yang sama dengan service
+  bool _showScrollToTop = false;
 
-  // ! Fetching data
+  // ! Fetch all data
   Future<void> _fetchHistories() async {
     setState(() {
       _isLoading = true;
     });
     try {
       final histories =
-          await historyService.getHistoryData(limit: _limit, page: _page);
+          await historyService.getHistoryData(limit: 100, page: 1);
       setState(() {
         _histories = histories;
         _isLoading = false;
@@ -35,35 +35,38 @@ class _HistoryPageState extends State<HistoryPage> {
     }
   }
 
+  void onScroll() {
+    if (_scrollController.offset > 800 && !_showScrollToTop) {
+      setState(() {
+        _showScrollToTop = true;
+      });
+    } else if (_scrollController.offset <= 800 && _showScrollToTop) {
+      setState(() {
+        _showScrollToTop = false;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     _fetchHistories();
+    _scrollController.addListener(onScroll);
   }
 
-  void nextPage() {
-    setState(() {
-      _page += 1;
-    });
-    _fetchHistories();
+  @override
+  void dispose() {
+    _scrollController.removeListener(onScroll);
+    _scrollController.dispose();
+    super.dispose();
   }
 
-  void previousPage() {
-    if (_page > 1) {
-      setState(() {
-        _page -= 1;
-        _fetchHistories();
-      });
-    }
-  }
-
-  void goToFirstPage() {
-    if (_page != 1) {
-      setState(() {
-        _page = 1;
-        _fetchHistories();
-      });
-    }
+  void _scrollToTop() {
+    _scrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
   }
 
   @override
@@ -80,65 +83,47 @@ class _HistoryPageState extends State<HistoryPage> {
       ),
       backgroundColor: Colors.transparent,
       body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: _isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : _histories.isEmpty
-                      ? const Center(
-                          child: Text(
-                            'Belum ada data',
-                            style:
-                                TextStyle(fontSize: 18, color: Colors.black54),
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : _histories.isEmpty
+                ? const Center(
+                    child: Text(
+                      'Belum ada data',
+                      style: TextStyle(fontSize: 18, color: Colors.black54),
+                    ),
+                  )
+                : ListView.builder(
+                    controller: _scrollController,
+                    itemCount: _histories.length,
+                    itemBuilder: (context, index) {
+                      final h = _histories[index];
+                      return Card(
+                        color: Colors.cyan,
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 32, vertical: 8),
+                        child: ListTile(
+                          title: Text('${h.deviceType} - ${h.triggerSource}'),
+                          subtitle: Text(
+                            'Status: ${h.status}\nWaktu: ${h.startTime} - ${h.endTime ?? "-"}\nValue: ${h.value}',
                           ),
-                        )
-                      : ListView.builder(
-                          itemCount: _histories.length,
-                          itemBuilder: (context, index) {
-                            final h = _histories[index];
-                            return Card(
-                              color: Colors.cyan,
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 32, vertical: 8),
-                              child: ListTile(
-                                title: Text(
-                                    '${h.deviceType} - ${h.triggerSource}'),
-                                subtitle: Text(
-                                  'Status: ${h.status}\nWaktu: ${h.startTime} - ${h.endTime ?? "-"}\nValue: ${h.value}',
-                                ),
-                              ),
-                            );
-                          },
                         ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 24),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    onPressed: _page > 1 ? goToFirstPage : null,
-                    child: const Text('First'),
+                      );
+                    },
                   ),
-                  const SizedBox(width: 16),
-                  ElevatedButton(
-                    onPressed: _page > 1 ? previousPage : null,
-                    child: const Text('Prev'),
-                  ),
-                  const SizedBox(width: 16),
-                  ElevatedButton(
-                    // Tombol Next nonaktif jika data kurang dari limit (halaman terakhir)
-                    onPressed: _histories.length == _limit ? nextPage : null,
-                    child: const Text('Next'),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-          ],
-        ),
       ),
+      floatingActionButton: _showScrollToTop
+          ? SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 100.0),
+                child: FloatingActionButton(
+                  onPressed: _scrollToTop,
+                  backgroundColor: Colors.cyan,
+                  child: const Icon(Icons.arrow_upward, color: Colors.white),
+                  tooltip: 'Kembali ke atas',
+                ),
+              ),
+            )
+          : null,
     );
   }
 }
