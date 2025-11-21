@@ -154,6 +154,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       value: 'Perempuan',
                       child: Text('Perempuan', style: TextStyle(fontSize: 20))),
                 ],
+                dropdownColor: Colors.cyan,
                 decoration: const InputDecoration(
                   labelText: 'Gender',
                   border: OutlineInputBorder(),
