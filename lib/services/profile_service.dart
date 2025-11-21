@@ -7,24 +7,20 @@ class ProfileService {
 
   // ! Get Data User
   Future<UserModel?> getUserProfile(String uid) async {
-    final query = await users.where('uid', isEqualTo: uid).limit(1).get();
-    if (query.docs.isNotEmpty) {
-      return UserModel.fromMap(query.docs.first.data() as Map<String, dynamic>);
-    } else {
-      return null;
+    final doc = await users.doc(uid).get();
+    if (doc.exists) {
+      return UserModel.fromMap(doc.data() as Map<String, dynamic>);
     }
+    return null;
   }
 
   // ! Simpan Data User
   Future<void> saveUserProfile(UserModel user) async {
-    await users.doc(user.uid).set(user.toMap());
+    await users.doc(user.uid).set(user.toMap(), SetOptions(merge: true));
   }
 
   // ! Update Data User
   Future<void> updateUserProfile(String uid, Map<String, dynamic> data) async {
-    final query = await users.where('uid', isEqualTo: uid).limit(1).get();
-    if (query.docs.isNotEmpty) {
-      await users.doc(query.docs.first.id).update(data);
-    }
+    await users.doc(uid).update(data);
   }
 }

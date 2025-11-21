@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/user_model.dart';
 import '../services/profile_service.dart';
+import './login_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -116,14 +117,28 @@ class _ProfilePageState extends State<ProfilePage> {
                 'UID: ${_user?.uid ?? "-"}',
                 style: const TextStyle(fontSize: 16, color: Colors.black),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 100),
               // Name
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(
                   labelText: 'Nama',
                   border: OutlineInputBorder(),
+                  labelStyle: TextStyle(fontSize: 20, color: Colors.black),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.cyan, width: 2),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.red),
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.redAccent, width: 2),
+                  ),
                 ),
+                style: const TextStyle(fontSize: 20),
                 validator: (value) =>
                     value == null || value.isEmpty ? 'Nama wajib diisi' : null,
               ),
@@ -133,13 +148,28 @@ class _ProfilePageState extends State<ProfilePage> {
                 value: genderValue.isNotEmpty ? genderValue : null,
                 items: const [
                   DropdownMenuItem(
-                      value: 'Laki-laki', child: Text('Laki-laki')),
+                      value: 'Laki-laki',
+                      child: Text('Laki-laki', style: TextStyle(fontSize: 20))),
                   DropdownMenuItem(
-                      value: 'Perempuan', child: Text('Perempuan')),
+                      value: 'Perempuan',
+                      child: Text('Perempuan', style: TextStyle(fontSize: 20))),
                 ],
                 decoration: const InputDecoration(
                   labelText: 'Gender',
                   border: OutlineInputBorder(),
+                  labelStyle: TextStyle(fontSize: 20, color: Colors.black),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.cyan, width: 2),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.red),
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.redAccent, width: 2),
+                  ),
                 ),
                 onChanged: (value) {
                   _genderController.text = value ?? '';
@@ -156,7 +186,21 @@ class _ProfilePageState extends State<ProfilePage> {
                   labelText: 'Tanggal Lahir (YYYY-MM-DD)',
                   border: OutlineInputBorder(),
                   suffixIcon: Icon(Icons.calendar_today),
+                  labelStyle: TextStyle(fontSize: 20, color: Colors.black),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.cyan, width: 2),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.red),
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.redAccent, width: 2),
+                  ),
                 ),
+                style: const TextStyle(fontSize: 20),
                 readOnly: true,
                 onTap: () async {
                   final pickedDate = await showDatePicker(
@@ -176,10 +220,30 @@ class _ProfilePageState extends State<ProfilePage> {
                     : null,
               ),
               const SizedBox(height: 32),
-              ElevatedButton(
-                onPressed: _saveProfile,
-                child: const Text('Simpan'),
-              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: _saveProfile,
+                    child: const Text('Simpan',
+                        style: TextStyle(color: Colors.black)),
+                  ),
+                  const SizedBox(width: 16),
+                  ElevatedButton(
+                    onPressed: () async {
+                      await FirebaseAuth.instance.signOut();
+                      if (!mounted) return;
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const LoginPage()),
+                      );
+                    },
+                    child: const Text('Logout',
+                        style: TextStyle(color: Colors.black)),
+                  ),
+                ],
+              )
             ],
           ),
         ),
