@@ -52,3 +52,6 @@ app.*.map.json
 # Google Services
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
+
+# api documentation
+assets/documentation
