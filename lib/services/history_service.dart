@@ -8,7 +8,7 @@ class HistoryService {
 
   // ! Get History data
   Future<List<HistoryModel>> getHistoryData(
-      {int limit = 10, int page = 1}) async {
+      {int limit = 100, int page = 1}) async {
     final offset = (page - 1) * limit;
     final response = await http
         .get(Uri.parse('$baseUrl/history?limit=$limit&offset=$offset'));

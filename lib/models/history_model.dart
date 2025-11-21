@@ -20,10 +20,11 @@ class HistoryModel {
   factory HistoryModel.fromJson(Map<String, dynamic> json) {
     return HistoryModel(
       id: json['id'],
-      deviceType: json['deviceType'],
-      triggerSource: json['triggerSource'],
-      startTime: DateTime.parse(json['startTime']),
-      endTime: json['endTime'] != null ? DateTime.parse(json['endTime']) : null,
+      deviceType: json['device_type'],
+      triggerSource: json['trigger_source'],
+      startTime: DateTime.parse(json['start_time']),
+      endTime:
+          json['end_time'] != null ? DateTime.parse(json['end_time']) : null,
       status: json['status'],
       value: json['value'],
     );
