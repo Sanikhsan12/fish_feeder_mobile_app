@@ -102,11 +102,10 @@ class _ProfilePageState extends State<ProfilePage> {
           key: _formKey,
           child: Column(
             children: [
+              const SizedBox(height: 80),
               // Profile Picture Placeholder
               CircleAvatar(
                 radius: 50,
-                backgroundImage:
-                    AssetImage('assets/images/profile_placeholder.png'),
                 child: _user?.photoUrl == null
                     ? const Icon(Icons.person, size: 50)
                     : null,
