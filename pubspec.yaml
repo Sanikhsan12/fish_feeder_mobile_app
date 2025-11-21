@@ -67,6 +67,7 @@ flutter:
     - assets/images/bg_autentikasi.png
     - assets/images/bg_splash.png
     - assets/images/bg_menu.png
+    - assets/images/profile.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
