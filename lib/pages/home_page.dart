@@ -42,16 +42,16 @@ class _HomePageState extends State<HomePage> {
 
       // ! Bottom Navigation Bar
       bottomNavigationBar: CurvedNavigationBar(
-        backgroundColor: Colors.cyan,
-        color: Colors.white70,
+        backgroundColor: Colors.transparent,
+        color: Colors.cyan,
         animationDuration: const Duration(milliseconds: 350),
         height: 60,
         index: _pageIndex,
         items: const [
-          Icon(Icons.home_outlined, size: 30, color: Colors.blueAccent),
-          Icon(Icons.schedule_outlined, size: 30, color: Colors.blueAccent),
-          Icon(Icons.history_outlined, size: 30, color: Colors.blueAccent),
-          Icon(Icons.person_outline, size: 30, color: Colors.blueAccent),
+          Icon(Icons.home_outlined, size: 30, color: Colors.white),
+          Icon(Icons.schedule_outlined, size: 30, color: Colors.white),
+          Icon(Icons.history_outlined, size: 30, color: Colors.white),
+          Icon(Icons.person_outline, size: 30, color: Colors.white),
         ],
         onTap: (index) {
           setState(() {
