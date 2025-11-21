@@ -96,6 +96,16 @@ class _ProfilePageState extends State<ProfilePage> {
         ? 'Laki-laki'
         : _genderController.text;
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Profil Pengguna',
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: 24,
+                fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.transparent,
+        iconTheme: const IconThemeData(color: Colors.black),
+        centerTitle: true,
+      ),
       backgroundColor: Colors.transparent,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
