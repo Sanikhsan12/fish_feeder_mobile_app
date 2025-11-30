@@ -26,3 +26,5 @@ aplikasi controling IOT berbasis flutter
 - Loading Animation Widget
 - Firebase Core
 - Firaebase Auth
+- Curved Navigation Bar
+- Cloud Firestore
