@@ -193,29 +193,64 @@ class _ControllingPageState extends State<ControllingPage> {
                                           color: Colors.brown),
                                     ),
                                   ),
+                                  // --- BAGIAN YANG DIPERBAIKI ---
                                   Card(
                                     color: Colors.cyan,
                                     child: ListTile(
-                                      title: const Text('Status UV'),
-                                      subtitle: Text(_statusUV,
-                                          style: const TextStyle(
-                                              color: Colors.white)),
+                                      // Kurangi padding horizontal agar muat di layar kecil
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 8.0),
                                       leading: const Icon(Icons.wb_sunny,
                                           color: Colors.yellow),
-                                      trailing: _uvManualActive
-                                          ? ElevatedButton(
-                                              onPressed: _stopManualUV,
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors.red,
+                                      title: const Text('Status UV',
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold)),
+
+                                      // Pindahkan konten ke subtitle menggunakan Column
+                                      subtitle: Column(
+                                        // PENTING: mainAxisSize.min mencegah error layout (unbounded height)
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(_statusUV,
+                                              style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 13)),
+
+                                          // Tombol Stop UV hanya muncul jika manual aktif
+                                          if (_uvManualActive)
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 8.0),
+                                              child: SizedBox(
+                                                height:
+                                                    35, // Batasi tinggi tombol
+                                                width: double
+                                                    .infinity, // Tombol memenuhi lebar yang tersedia
+                                                child: ElevatedButton(
+                                                  onPressed: _stopManualUV,
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    backgroundColor: Colors.red,
+                                                    // Hilangkan padding internal tombol agar teks muat
+                                                    padding: EdgeInsets.zero,
+                                                  ),
+                                                  child: const Text(
+                                                      'Stop UV', // Teks dipersingkat
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 12)),
+                                                ),
                                               ),
-                                              child: const Text(
-                                                  'Stop Manual UV',
-                                                  style: TextStyle(
-                                                      color: Colors.black)),
                                             )
-                                          : null,
+                                        ],
+                                      ),
                                     ),
                                   ),
+                                  // ------------------------------
                                   Card(
                                     color: Colors.cyan,
                                     child: ListTile(
