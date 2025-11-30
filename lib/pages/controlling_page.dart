@@ -100,165 +100,171 @@ class _ControllingPageState extends State<ControllingPage> {
       backgroundColor: Colors.transparent,
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const SizedBox(height: 50),
-                  Card(
-                    color: Colors.cyan,
-                    child: ListTile(
-                      title: const Text('Stock Pakan'),
-                      subtitle: Text('$_stock gram'),
-                      leading: const Icon(Icons.food_bank, color: Colors.black),
+          : RefreshIndicator(
+              onRefresh: _fetchDashboard,
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const SizedBox(height: 50),
+                    Card(
+                      color: Colors.cyan,
+                      child: ListTile(
+                        title: const Text('Stock Pakan'),
+                        subtitle: Text('$_stock gram'),
+                        leading:
+                            const Icon(Icons.food_bank, color: Colors.black),
+                      ),
                     ),
-                  ),
-                  Card(
-                    color: Colors.cyan,
-                    child: ListTile(
-                      title: const Text('Status Feeder'),
-                      subtitle: Text(_statusFeeder),
-                      leading: const Icon(Icons.feed, color: Colors.black),
+                    Card(
+                      color: Colors.cyan,
+                      child: ListTile(
+                        title: const Text('Status Feeder'),
+                        subtitle: Text(_statusFeeder),
+                        leading: const Icon(Icons.feed, color: Colors.black),
+                      ),
                     ),
-                  ),
-                  Card(
-                    color: Colors.cyan,
-                    child: ListTile(
-                      title: const Text('Status UV'),
-                      subtitle: Text(_statusUV),
-                      leading: const Icon(Icons.wb_sunny, color: Colors.black),
-                      trailing: _uvManualActive
-                          ? ElevatedButton(
-                              onPressed: _stopManualUV,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
+                    Card(
+                      color: Colors.cyan,
+                      child: ListTile(
+                        title: const Text('Status UV'),
+                        subtitle: Text(_statusUV),
+                        leading:
+                            const Icon(Icons.wb_sunny, color: Colors.black),
+                        trailing: _uvManualActive
+                            ? ElevatedButton(
+                                onPressed: _stopManualUV,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                ),
+                                child: const Text('Stop Manual UV',
+                                    style: TextStyle(color: Colors.black)),
+                              )
+                            : null,
+                      ),
+                    ),
+                    Card(
+                      color: Colors.cyan,
+                      child: ListTile(
+                        title: const Text('Last Feed'),
+                        subtitle: Text(_lastFeed),
+                        leading: const Icon(Icons.history, color: Colors.black),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    const Text('Manual Feeding',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _feedController,
+                            keyboardType: TextInputType.number,
+                            decoration: const InputDecoration(
+                              labelText: 'Jumlah pakan (gram)',
+                              border: OutlineInputBorder(),
+                              labelStyle:
+                                  TextStyle(fontSize: 20, color: Colors.black),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.white),
                               ),
-                              child: const Text('Stop Manual UV',
-                                  style: TextStyle(color: Colors.black)),
-                            )
-                          : null,
-                    ),
-                  ),
-                  Card(
-                    color: Colors.cyan,
-                    child: ListTile(
-                      title: const Text('Last Feed'),
-                      subtitle: Text(_lastFeed),
-                      leading: const Icon(Icons.history, color: Colors.black),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  const Text('Manual Feeding',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _feedController,
-                          keyboardType: TextInputType.number,
-                          decoration: const InputDecoration(
-                            labelText: 'Jumlah pakan (gram)',
-                            border: OutlineInputBorder(),
-                            labelStyle:
-                                TextStyle(fontSize: 20, color: Colors.black),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.cyan, width: 2),
-                            ),
-                            errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.red),
-                            ),
-                            focusedErrorBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.redAccent, width: 2),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.cyan, width: 2),
+                              ),
+                              errorBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.red),
+                              ),
+                              focusedErrorBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Colors.redAccent, width: 2),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      ElevatedButton(
-                        onPressed: () {
-                          final amount = int.tryParse(_feedController.text);
-                          if (amount != null && amount > 0) {
-                            _manualFeed(amount);
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content:
-                                      Text('Masukkan jumlah pakan yang valid')),
-                            );
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.cyan,
+                        const SizedBox(width: 8),
+                        ElevatedButton(
+                          onPressed: () {
+                            final amount = int.tryParse(_feedController.text);
+                            if (amount != null && amount > 0) {
+                              _manualFeed(amount);
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text(
+                                        'Masukkan jumlah pakan yang valid')),
+                              );
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.cyan,
+                          ),
+                          child: const Text(
+                            'Feed',
+                            style: TextStyle(color: Colors.black),
+                          ),
                         ),
-                        child: const Text(
-                          'Feed',
-                          style: TextStyle(color: Colors.black),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  const Text('Manual UV Control',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _uvController,
-                          keyboardType: TextInputType.number,
-                          decoration: const InputDecoration(
-                            labelText: 'Durasi UV (menit)',
-                            border: OutlineInputBorder(),
-                            labelStyle:
-                                TextStyle(fontSize: 20, color: Colors.black),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.cyan, width: 2),
-                            ),
-                            errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.red),
-                            ),
-                            focusedErrorBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.redAccent, width: 2),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    const Text('Manual UV Control',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _uvController,
+                            keyboardType: TextInputType.number,
+                            decoration: const InputDecoration(
+                              labelText: 'Durasi UV (menit)',
+                              border: OutlineInputBorder(),
+                              labelStyle:
+                                  TextStyle(fontSize: 20, color: Colors.black),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.white),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.cyan, width: 2),
+                              ),
+                              errorBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.red),
+                              ),
+                              focusedErrorBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Colors.redAccent, width: 2),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      ElevatedButton(
-                        onPressed: () {
-                          final duration = int.tryParse(_uvController.text);
-                          if (duration != null && duration > 0) {
-                            _manualUV(duration * 60);
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content:
-                                      Text('Masukkan durasi UV yang valid')),
-                            );
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              _uvManualActive ? Colors.grey : Colors.cyan,
+                        const SizedBox(width: 8),
+                        ElevatedButton(
+                          onPressed: () {
+                            final duration = int.tryParse(_uvController.text);
+                            if (duration != null && duration > 0) {
+                              _manualUV(duration * 60);
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content:
+                                        Text('Masukkan durasi UV yang valid')),
+                              );
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                _uvManualActive ? Colors.grey : Colors.cyan,
+                          ),
+                          child: const Text('Start UV',
+                              style: TextStyle(color: Colors.black)),
                         ),
-                        child: const Text('Start UV',
-                            style: TextStyle(color: Colors.black)),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
     );
