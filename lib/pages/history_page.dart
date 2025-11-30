@@ -113,6 +113,86 @@ class _HistoryPageState extends State<HistoryPage> {
     _fetchHistories();
   }
 
+  bool _isFilterOpen = false;
+
+  void _showFilterDialog() async {
+    String? tempMonth = _selectedMonth;
+    String? tempYear = _selectedYear;
+    setState(() {
+      _isFilterOpen = true;
+    });
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Filter Riwayat',
+              style: TextStyle(color: Colors.white)),
+          backgroundColor: Colors.cyan,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              DropdownButtonFormField<String>(
+                value: tempMonth,
+                dropdownColor: Colors.cyanAccent,
+                hint: const Text('Pilih Bulan',
+                    style: TextStyle(color: Colors.white)),
+                items: _months
+                    .map((m) => DropdownMenuItem(value: m, child: Text(m)))
+                    .toList(),
+                onChanged: (val) {
+                  tempMonth = val;
+                },
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: tempYear,
+                dropdownColor: Colors.cyanAccent,
+                hint: const Text('Pilih Tahun',
+                    style: TextStyle(color: Colors.white)),
+                items: _years
+                    .map((y) => DropdownMenuItem(value: y, child: Text(y)))
+                    .toList(),
+                onChanged: (val) {
+                  tempYear = val;
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  _selectedMonth = tempMonth;
+                  _selectedYear = tempYear;
+                  _isFilterOpen = false;
+                });
+                _applyFilter();
+                Navigator.of(context).pop();
+              },
+              child: const Text('Terapkan Filter',
+                  style: TextStyle(color: Colors.white)),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  _selectedMonth = null;
+                  _selectedYear = null;
+                  _isFilterOpen = false;
+                });
+                _resetFilter();
+                Navigator.of(context).pop();
+              },
+              child: const Text('Reset', style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        );
+      },
+    );
+    setState(() {
+      _isFilterOpen = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -124,6 +204,20 @@ class _HistoryPageState extends State<HistoryPage> {
                 fontSize: 24)),
         centerTitle: true,
         backgroundColor: Colors.transparent,
+        actions: [
+          IconButton(
+            icon: Icon(
+              _isFilterOpen ? Icons.filter_alt_off : Icons.filter_alt,
+              color: Colors.black,
+            ),
+            onPressed: () {
+              if (!_isFilterOpen) {
+                _showFilterDialog();
+              }
+            },
+            tooltip: 'Filter',
+          ),
+        ],
       ),
       backgroundColor: Colors.transparent,
       body: SafeArea(
@@ -131,59 +225,6 @@ class _HistoryPageState extends State<HistoryPage> {
           onRefresh: _fetchHistories,
           child: Column(
             children: [
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: DropdownButtonFormField<String>(
-                        value: _selectedMonth,
-                        hint: const Text('Pilih Bulan'),
-                        items: _months
-                            .map((m) =>
-                                DropdownMenuItem(value: m, child: Text(m)))
-                            .toList(),
-                        onChanged: (val) {
-                          setState(() {
-                            _selectedMonth = val;
-                          });
-                          _applyFilter();
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: DropdownButtonFormField<String>(
-                        value: _selectedYear,
-                        hint: const Text('Pilih Tahun'),
-                        items: _years
-                            .map((y) =>
-                                DropdownMenuItem(value: y, child: Text(y)))
-                            .toList(),
-                        onChanged: (val) {
-                          setState(() {
-                            _selectedYear = val;
-                          });
-                          _applyFilter();
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          _selectedMonth = null;
-                          _selectedYear = null;
-                        });
-                        _resetFilter();
-                      },
-                      child: const Text('Reset Filter',
-                          style: TextStyle(color: Colors.black)),
-                    )
-                  ],
-                ),
-              ),
               Expanded(
                 child: _isLoading
                     ? const Center(child: CircularProgressIndicator())
@@ -279,7 +320,7 @@ class _HistoryPageState extends State<HistoryPage> {
                                               "${h.startTime.month.toString().padLeft(2, '0')}-"
                                               "${h.startTime.year}",
                                               style: const TextStyle(
-                                                  color: Colors.black),
+                                                  color: Colors.white),
                                             ),
                                           ],
                                         ),
@@ -290,7 +331,7 @@ class _HistoryPageState extends State<HistoryPage> {
                                             const SizedBox(width: 4),
                                             Text('$start - $end',
                                                 style: const TextStyle(
-                                                    color: Colors.black)),
+                                                    color: Colors.white)),
                                           ],
                                         ),
                                         Row(
@@ -305,7 +346,7 @@ class _HistoryPageState extends State<HistoryPage> {
                                             const SizedBox(width: 4),
                                             Text(valueText,
                                                 style: const TextStyle(
-                                                    color: Colors.black54)),
+                                                    color: Colors.white)),
                                           ],
                                         ),
                                         Row(
@@ -315,17 +356,17 @@ class _HistoryPageState extends State<HistoryPage> {
                                             const SizedBox(width: 4),
                                             Text('Status: ${h.status}',
                                                 style: const TextStyle(
-                                                    color: Colors.black87)),
+                                                    color: Colors.white)),
                                           ],
                                         ),
                                         Row(
                                           children: [
                                             const Icon(Icons.person,
-                                                size: 16, color: Colors.grey),
+                                                size: 16, color: Colors.brown),
                                             const SizedBox(width: 4),
                                             Text('Trigger: ${h.triggerSource}',
                                                 style: const TextStyle(
-                                                    color: Colors.black54)),
+                                                    color: Colors.white)),
                                           ],
                                         ),
                                       ],
