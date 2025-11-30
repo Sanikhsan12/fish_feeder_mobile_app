@@ -34,10 +34,7 @@ class _HomePageState extends State<HomePage> {
               image: AssetImage('assets/images/bg_menu.png'),
               fit: BoxFit.cover),
         ),
-        child: IndexedStack(
-          index: _pageIndex,
-          children: _pages,
-        ),
+        child: _pages[_pageIndex],
       ),
 
       // ! Bottom Navigation Bar
