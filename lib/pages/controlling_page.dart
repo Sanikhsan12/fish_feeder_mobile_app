@@ -18,6 +18,8 @@ class _ControllingPageState extends State<ControllingPage> {
   int _stock = 0;
   String _lastFeed = '';
   bool _uvManualActive = false;
+  double? _temperature;
+  double? _humidity;
 
   @override
   void initState() {
@@ -34,18 +36,31 @@ class _ControllingPageState extends State<ControllingPage> {
 
   Future<void> _fetchDashboard() async {
     setState(() => _isLoading = true);
-    final dashboard = await _service.getDashboard();
-    setState(() {
-      _statusFeeder = dashboard['feeder']['status'];
-      _statusUV = dashboard['uv']['state'];
-      _stock = dashboard['stock']['amount_gram'];
-      _uvManualActive = dashboard['uv']['manual_active'];
-      _isLoading = false;
-    });
-    final lastFeed = await _service.getLastFeed();
-    setState(() {
-      _lastFeed = lastFeed;
-    });
+    try {
+      final dashboard = await _service.getDashboard();
+      setState(() {
+        _statusFeeder = dashboard['feeder']['status'] ?? '';
+        _statusUV = dashboard['uv']['state'] ?? '';
+        _stock = dashboard['stock']['amount_gram'] ?? 0;
+        _uvManualActive = dashboard['uv']['manual_active'] ?? false;
+        _temperature = dashboard['environment']['temperature']?.toDouble();
+        _humidity = dashboard['environment']['humidity']?.toDouble();
+        _isLoading = false;
+      });
+      final lastFeed = await _service.getLastFeed();
+      setState(() {
+        _lastFeed = lastFeed ?? '';
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Gagal memuat dashboard: $e')),
+        );
+      }
+    }
   }
 
   Future<void> _manualFeed(int amount) async {
@@ -101,7 +116,9 @@ class _ControllingPageState extends State<ControllingPage> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : RefreshIndicator(
-              onRefresh: _fetchDashboard,
+              onRefresh: () async {
+                await _fetchDashboard();
+              },
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.all(16),
@@ -109,49 +126,113 @@ class _ControllingPageState extends State<ControllingPage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const SizedBox(height: 50),
-                    Card(
-                      color: Colors.cyan,
-                      child: ListTile(
-                        title: const Text('Stock Pakan'),
-                        subtitle: Text('$_stock gram'),
-                        leading:
-                            const Icon(Icons.food_bank, color: Colors.black),
-                      ),
-                    ),
-                    Card(
-                      color: Colors.cyan,
-                      child: ListTile(
-                        title: const Text('Status Feeder'),
-                        subtitle: Text(_statusFeeder),
-                        leading: const Icon(Icons.feed, color: Colors.black),
-                      ),
-                    ),
-                    Card(
-                      color: Colors.cyan,
-                      child: ListTile(
-                        title: const Text('Status UV'),
-                        subtitle: Text(_statusUV),
-                        leading:
-                            const Icon(Icons.wb_sunny, color: Colors.black),
-                        trailing: _uvManualActive
-                            ? ElevatedButton(
-                                onPressed: _stopManualUV,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.red,
-                                ),
-                                child: const Text('Stop Manual UV',
-                                    style: TextStyle(color: Colors.black)),
-                              )
-                            : null,
-                      ),
-                    ),
-                    Card(
-                      color: Colors.cyan,
-                      child: ListTile(
-                        title: const Text('Last Feed'),
-                        subtitle: Text(_lastFeed),
-                        leading: const Icon(Icons.history, color: Colors.black),
-                      ),
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        final double colWidth = (constraints.maxWidth - 16) / 2;
+                        return Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: colWidth,
+                              child: Column(
+                                children: [
+                                  if (_temperature != null)
+                                    Card(
+                                      color: Colors.cyan,
+                                      child: ListTile(
+                                        title: const Text('Suhu Sekarang'),
+                                        subtitle: Text(
+                                            '${_temperature!.toStringAsFixed(2)} °C',
+                                            style: const TextStyle(
+                                                color: Colors.white)),
+                                        leading: const Icon(Icons.thermostat,
+                                            color: Colors.red),
+                                      ),
+                                    ),
+                                  if (_humidity != null)
+                                    Card(
+                                      color: Colors.cyan,
+                                      child: ListTile(
+                                        title:
+                                            const Text('Kelembapan Sekarang'),
+                                        subtitle: Text(
+                                            '${_humidity!.toStringAsFixed(2)} %',
+                                            style: const TextStyle(
+                                                color: Colors.white)),
+                                        leading: const Icon(Icons.water_drop,
+                                            color: Colors.blue),
+                                      ),
+                                    ),
+                                  Card(
+                                    color: Colors.cyan,
+                                    child: ListTile(
+                                      title: const Text('Stock Pakan'),
+                                      subtitle: Text('$_stock gram',
+                                          style: const TextStyle(
+                                              color: Colors.white)),
+                                      leading: const Icon(Icons.food_bank,
+                                          color: Colors.green),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            SizedBox(
+                              width: colWidth,
+                              child: Column(
+                                children: [
+                                  Card(
+                                    color: Colors.cyan,
+                                    child: ListTile(
+                                      title: const Text('Status Feeder'),
+                                      subtitle: Text(_statusFeeder,
+                                          style: const TextStyle(
+                                              color: Colors.white)),
+                                      leading: const Icon(Icons.feed,
+                                          color: Colors.brown),
+                                    ),
+                                  ),
+                                  Card(
+                                    color: Colors.cyan,
+                                    child: ListTile(
+                                      title: const Text('Status UV'),
+                                      subtitle: Text(_statusUV,
+                                          style: const TextStyle(
+                                              color: Colors.white)),
+                                      leading: const Icon(Icons.wb_sunny,
+                                          color: Colors.yellow),
+                                      trailing: _uvManualActive
+                                          ? ElevatedButton(
+                                              onPressed: _stopManualUV,
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.red,
+                                              ),
+                                              child: const Text(
+                                                  'Stop Manual UV',
+                                                  style: TextStyle(
+                                                      color: Colors.black)),
+                                            )
+                                          : null,
+                                    ),
+                                  ),
+                                  Card(
+                                    color: Colors.cyan,
+                                    child: ListTile(
+                                      title: const Text('Last Feed'),
+                                      subtitle: Text(_lastFeed,
+                                          style: const TextStyle(
+                                              color: Colors.white)),
+                                      leading: const Icon(Icons.history,
+                                          color: Colors.orange),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     ),
                     const SizedBox(height: 24),
                     const Text('Manual Feeding',
@@ -160,28 +241,19 @@ class _ControllingPageState extends State<ControllingPage> {
                     Row(
                       children: [
                         Expanded(
-                          child: TextField(
+                          child: TextFormField(
                             controller: _feedController,
                             keyboardType: TextInputType.number,
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               labelText: 'Jumlah pakan (gram)',
-                              border: OutlineInputBorder(),
-                              labelStyle:
-                                  TextStyle(fontSize: 20, color: Colors.black),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.white),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.cyan, width: 2),
-                              ),
-                              errorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.red),
-                              ),
-                              focusedErrorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Colors.redAccent, width: 2),
-                              ),
+                              prefixIcon: const Icon(Icons.food_bank,
+                                  color: Colors.green),
+                              filled: true,
+                              fillColor: Colors.cyan,
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                              labelStyle: const TextStyle(
+                                  fontSize: 18, color: Colors.black),
                             ),
                           ),
                         ),
@@ -202,10 +274,8 @@ class _ControllingPageState extends State<ControllingPage> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.cyan,
                           ),
-                          child: const Text(
-                            'Feed',
-                            style: TextStyle(color: Colors.black),
-                          ),
+                          child: const Text('Feed',
+                              style: TextStyle(color: Colors.black)),
                         ),
                       ],
                     ),
@@ -215,28 +285,19 @@ class _ControllingPageState extends State<ControllingPage> {
                     Row(
                       children: [
                         Expanded(
-                          child: TextField(
+                          child: TextFormField(
                             controller: _uvController,
                             keyboardType: TextInputType.number,
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               labelText: 'Durasi UV (menit)',
-                              border: OutlineInputBorder(),
-                              labelStyle:
-                                  TextStyle(fontSize: 20, color: Colors.black),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.white),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.cyan, width: 2),
-                              ),
-                              errorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.red),
-                              ),
-                              focusedErrorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Colors.redAccent, width: 2),
-                              ),
+                              prefixIcon:
+                                  const Icon(Icons.timer, color: Colors.yellow),
+                              filled: true,
+                              fillColor: Colors.cyan,
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                              labelStyle: const TextStyle(
+                                  fontSize: 18, color: Colors.black),
                             ),
                           ),
                         ),
