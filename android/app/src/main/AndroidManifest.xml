@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="fish_feeder_mobile_app"
+        android:label="Feeder"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

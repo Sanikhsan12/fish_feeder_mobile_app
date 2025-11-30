@@ -41,6 +41,7 @@ dependencies:
   firebase_auth: ^6.1.2
   curved_navigation_bar: ^1.0.6
   cloud_firestore: ^6.1.0
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:
@@ -68,8 +69,13 @@ flutter:
     - assets/images/bg_splash.png
     - assets/images/bg_menu.png
     - assets/images/profile_placeholder.png
+    - assets/images/icon_app.png
     - .env
 
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/icon_app.png"
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
