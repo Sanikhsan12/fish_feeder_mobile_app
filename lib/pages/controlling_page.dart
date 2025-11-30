@@ -52,9 +52,11 @@ class _ControllingPageState extends State<ControllingPage> {
     setState(() => _isLoading = true);
     final result = await _service.manualFeed(amount);
     setState(() => _isLoading = false);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(result)),
-    );
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(result)),
+      );
+    }
     _fetchDashboard();
   }
 
@@ -62,9 +64,11 @@ class _ControllingPageState extends State<ControllingPage> {
     setState(() => _isLoading = true);
     final result = await _service.manualUV(durationSeconds);
     setState(() => _isLoading = false);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(result)),
-    );
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(result)),
+      );
+    }
     _fetchDashboard();
   }
 
@@ -72,9 +76,11 @@ class _ControllingPageState extends State<ControllingPage> {
     setState(() => _isLoading = true);
     final result = await _service.stopManualUV();
     setState(() => _isLoading = false);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(result)),
-    );
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(result)),
+      );
+    }
     _fetchDashboard();
   }
 
