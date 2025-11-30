@@ -15,7 +15,8 @@ class _HistoryPageState extends State<HistoryPage> {
   List<HistoryModel> _allHistories = [];
   List<HistoryModel> _filteredHistories = [];
   int _page = 1;
-  final int _totalPages = 1;
+  final int _pageSize = 10;
+  int get _totalPages => (_filteredHistories.length / _pageSize).ceil();
 
   String? _selectedMonth;
   String? _selectedYear;
@@ -64,6 +65,15 @@ class _HistoryPageState extends State<HistoryPage> {
     });
   }
 
+  void _resetFilter() {
+    setState(() {
+      _selectedMonth = null;
+      _selectedYear = null;
+      _page = 1;
+      _filteredHistories = List.from(_allHistories);
+    });
+  }
+
   void nextPage() {
     if (_page < _totalPages) {
       setState(() {
@@ -89,6 +99,12 @@ class _HistoryPageState extends State<HistoryPage> {
       });
       _fetchHistories();
     }
+  }
+
+  List<HistoryModel> get _pagedHistories {
+    final start = (_page - 1) * _pageSize;
+    final end = (_page * _pageSize).clamp(0, _filteredHistories.length);
+    return _filteredHistories.sublist(start, end);
   }
 
   @override
@@ -157,7 +173,7 @@ class _HistoryPageState extends State<HistoryPage> {
                         _selectedMonth = null;
                         _selectedYear = null;
                       });
-                      _applyFilter();
+                      _resetFilter();
                     },
                     child: const Text('Reset Filter',
                         style: TextStyle(color: Colors.black)),
@@ -168,15 +184,15 @@ class _HistoryPageState extends State<HistoryPage> {
             Expanded(
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator())
-                  : _filteredHistories.isEmpty
+                  : _pagedHistories.isEmpty
                       ? const Center(
                           child: Text('Belum ada data',
                               style: TextStyle(
                                   fontSize: 18, color: Colors.black54)))
                       : ListView.builder(
-                          itemCount: _filteredHistories.length,
+                          itemCount: _pagedHistories.length,
                           itemBuilder: (context, index) {
-                            final h = _filteredHistories[index];
+                            final h = _pagedHistories[index];
                             return Card(
                               color: Colors.cyan,
                               margin: const EdgeInsets.symmetric(
