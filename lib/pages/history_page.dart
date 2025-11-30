@@ -384,18 +384,30 @@ class _HistoryPageState extends State<HistoryPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.cyan,
+                      ),
                       onPressed: _page > 1 ? goToFirstPage : null,
-                      child: const Text('First'),
+                      child: const Text('First',
+                          style: TextStyle(color: Colors.black)),
                     ),
                     const SizedBox(width: 16),
                     ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.cyan,
+                      ),
                       onPressed: _page > 1 ? previousPage : null,
-                      child: const Text('Prev'),
+                      child: const Text('Prev',
+                          style: TextStyle(color: Colors.black)),
                     ),
                     const SizedBox(width: 16),
                     ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.cyan,
+                      ),
                       onPressed: _page < _totalPages ? nextPage : null,
-                      child: const Text('Next'),
+                      child: const Text('Next',
+                          style: TextStyle(color: Colors.black)),
                     ),
                     const SizedBox(width: 16),
                     Text('Page $_page / $_totalPages'),
