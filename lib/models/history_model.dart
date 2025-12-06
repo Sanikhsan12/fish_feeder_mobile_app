@@ -22,9 +22,10 @@ class HistoryModel {
       id: json['id'],
       deviceType: json['device_type'],
       triggerSource: json['trigger_source'],
-      startTime: DateTime.parse(json['start_time']),
-      endTime:
-          json['end_time'] != null ? DateTime.parse(json['end_time']) : null,
+      startTime: DateTime.parse(json['start_time']).toLocal(),
+      endTime: json['end_time'] != null
+          ? DateTime.parse(json['end_time']).toLocal()
+          : null,
       status: json['status'],
       value: json['value'],
     );
