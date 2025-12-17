@@ -41,10 +41,10 @@ dependencies:
   firebase_auth: ^6.1.2
   curved_navigation_bar: ^1.0.6
   cloud_firestore: ^6.1.0
-  flutter_launcher_icons: ^0.14.4
   fl_chart: ^1.1.1
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.14.4
   flutter_test:
     sdk: flutter
 
