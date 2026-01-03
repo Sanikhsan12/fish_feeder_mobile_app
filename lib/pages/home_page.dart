@@ -4,7 +4,6 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 // ! Pages
 import './controlling_page.dart';
 import './history_page.dart';
-import './profile_page.dart';
 import './schedule_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -21,7 +20,6 @@ class _HomePageState extends State<HomePage> {
     ControllingPage(),
     SchedulePage(),
     HistoryPage(),
-    ProfilePage(),
   ];
 
   @override
@@ -48,7 +46,6 @@ class _HomePageState extends State<HomePage> {
           Icon(Icons.home_outlined, size: 30, color: Colors.white),
           Icon(Icons.schedule_outlined, size: 30, color: Colors.white),
           Icon(Icons.history_outlined, size: 30, color: Colors.white),
-          Icon(Icons.person_outline, size: 30, color: Colors.white),
         ],
         onTap: (index) {
           setState(() {
