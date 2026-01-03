@@ -269,175 +269,179 @@ class _SchedulePageState extends State<SchedulePage> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        backgroundColor: Colors.transparent, // Transparan agar bg Home terlihat
-        appBar: AppBar(
           backgroundColor: Colors.transparent,
-          elevation: 0,
-          title: const Text('Scheduling',
-              style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24)),
-          centerTitle: true,
-          bottom: const TabBar(
-            indicatorColor: Colors.cyan,
-            labelColor: Colors.black,
-            unselectedLabelColor: Colors.black54,
-            tabs: [
-              Tab(icon: Icon(Icons.set_meal), text: 'Feeder'),
-              Tab(icon: Icon(Icons.wb_sunny), text: 'UV Sterilizer'),
-            ],
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            title: const Text('Scheduling',
+                style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24)),
+            centerTitle: true,
+            bottom: const TabBar(
+              indicatorColor: Colors.cyan,
+              labelColor: Colors.black,
+              unselectedLabelColor: Colors.black54,
+              tabs: [
+                Tab(icon: Icon(Icons.set_meal), text: 'Feeder'),
+                Tab(icon: Icon(Icons.wb_sunny), text: 'UV Sterilizer'),
+              ],
+            ),
           ),
-        ),
-        body: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : TabBarView(
-                children: [
-                  // ! Feeder List
-                  RefreshIndicator(
-                    onRefresh: _fetchSchedules,
-                    child: ListView.builder(
-                      padding: const EdgeInsets.all(16),
-                      itemCount: _feederSchedules.length,
-                      itemBuilder: (context, index) {
-                        final item = _feederSchedules[index];
-                        return Card(
-                          color: Colors.cyan,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16)),
-                          elevation: 4,
-                          margin: const EdgeInsets.only(bottom: 12),
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              backgroundColor: Colors.white24,
-                              child: Icon(Icons.set_meal,
-                                  color: item.isActive
-                                      ? Colors.white
-                                      : Colors.grey),
-                            ),
-                            title: Text('${item.dayName} - ${item.time}',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                    fontSize: 18)),
-                            subtitle: Text('${item.amountGram} gram',
-                                style: const TextStyle(color: Colors.white70)),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.edit,
-                                      color: Colors.white),
-                                  onPressed: () =>
-                                      _showFeederDialog(item: item),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.delete,
-                                      color: Colors.redAccent),
-                                  onPressed: () =>
-                                      _deleteSchedule(item.id, true),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-
-                  // ! UV List
-                  RefreshIndicator(
-                    onRefresh: _fetchSchedules,
-                    child: ListView.builder(
-                      padding: const EdgeInsets.all(16),
-                      itemCount: _uvSchedules.length,
-                      itemBuilder: (context, index) {
-                        final item = _uvSchedules[index];
-                        return Card(
-                          color: Colors.cyan,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16)),
-                          elevation: 4,
-                          margin: const EdgeInsets.only(bottom: 12),
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              backgroundColor: Colors.white24,
-                              child: Icon(Icons.wb_sunny,
-                                  color: item.isActive
-                                      ? Colors.yellow
-                                      : Colors.grey),
-                            ),
-                            title: Text(item.dayName,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                    fontSize: 18)),
-                            subtitle: Text(
-                                '${item.startTime} - ${item.endTime}',
-                                style: const TextStyle(color: Colors.white70)),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.edit,
-                                      color: Colors.white),
-                                  onPressed: () => _showUVDialog(item: item),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.delete,
-                                      color: Colors.redAccent),
-                                  onPressed: () =>
-                                      _deleteSchedule(item.id, false),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.cyan,
-          child: const Icon(Icons.add, color: Colors.white),
-          onPressed: () {
-            // Cek tab mana yang aktif, tapi karena FAB diluar TabView,
-            // kita pakai controller atau simple dialog choice.
-            // Agar simpel, saya tampilkan dialog pilihan.
-            showModalBottomSheet(
-              context: context,
-              backgroundColor: Colors.transparent,
-              builder: (ctx) => Container(
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                ),
-                child: Wrap(
+          body: _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : TabBarView(
                   children: [
-                    ListTile(
-                      leading: const Icon(Icons.set_meal, color: Colors.cyan),
-                      title: const Text('Jadwal Pakan Baru'),
-                      onTap: () {
-                        Navigator.pop(ctx);
-                        _showFeederDialog();
-                      },
+                    // ! Feeder List
+                    RefreshIndicator(
+                      onRefresh: _fetchSchedules,
+                      child: ListView.builder(
+                        padding: const EdgeInsets.all(16),
+                        itemCount: _feederSchedules.length,
+                        itemBuilder: (context, index) {
+                          final item = _feederSchedules[index];
+                          return Card(
+                            color: Colors.cyan,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16)),
+                            elevation: 4,
+                            margin: const EdgeInsets.only(bottom: 12),
+                            child: ListTile(
+                              leading: CircleAvatar(
+                                backgroundColor: Colors.white24,
+                                child: Icon(Icons.set_meal,
+                                    color: item.isActive
+                                        ? Colors.white
+                                        : Colors.grey),
+                              ),
+                              title: Text('${item.dayName} - ${item.time}',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                      fontSize: 18)),
+                              subtitle: Text('${item.amountGram} gram',
+                                  style:
+                                      const TextStyle(color: Colors.white70)),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.edit,
+                                        color: Colors.white),
+                                    onPressed: () =>
+                                        _showFeederDialog(item: item),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.delete,
+                                        color: Colors.redAccent),
+                                    onPressed: () =>
+                                        _deleteSchedule(item.id, true),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ),
-                    ListTile(
-                      leading: const Icon(Icons.wb_sunny, color: Colors.orange),
-                      title: const Text('Jadwal UV Baru'),
-                      onTap: () {
-                        Navigator.pop(ctx);
-                        _showUVDialog();
-                      },
+
+                    // ! UV List
+                    RefreshIndicator(
+                      onRefresh: _fetchSchedules,
+                      child: ListView.builder(
+                        padding: const EdgeInsets.all(16),
+                        itemCount: _uvSchedules.length,
+                        itemBuilder: (context, index) {
+                          final item = _uvSchedules[index];
+                          return Card(
+                            color: Colors.cyan,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16)),
+                            elevation: 4,
+                            margin: const EdgeInsets.only(bottom: 12),
+                            child: ListTile(
+                              leading: CircleAvatar(
+                                backgroundColor: Colors.white24,
+                                child: Icon(Icons.wb_sunny,
+                                    color: item.isActive
+                                        ? Colors.yellow
+                                        : Colors.grey),
+                              ),
+                              title: Text(item.dayName,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                      fontSize: 18)),
+                              subtitle: Text(
+                                  '${item.startTime} - ${item.endTime}',
+                                  style:
+                                      const TextStyle(color: Colors.white70)),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.edit,
+                                        color: Colors.white),
+                                    onPressed: () => _showUVDialog(item: item),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.delete,
+                                        color: Colors.redAccent),
+                                    onPressed: () =>
+                                        _deleteSchedule(item.id, false),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ],
                 ),
-              ),
-            );
-          },
-        ),
-      ),
+          floatingActionButton: Padding(
+            padding: const EdgeInsets.only(bottom: 70.0),
+            child: FloatingActionButton(
+              backgroundColor: Colors.cyan,
+              child: const Icon(Icons.add, color: Colors.white),
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  backgroundColor: Colors.transparent,
+                  builder: (ctx) => Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(20)),
+                    ),
+                    child: Wrap(
+                      children: [
+                        ListTile(
+                          leading:
+                              const Icon(Icons.set_meal, color: Colors.cyan),
+                          title: const Text('Jadwal Pakan Baru'),
+                          onTap: () {
+                            Navigator.pop(ctx);
+                            _showFeederDialog();
+                          },
+                        ),
+                        ListTile(
+                          leading:
+                              const Icon(Icons.wb_sunny, color: Colors.orange),
+                          title: const Text('Jadwal UV Baru'),
+                          onTap: () {
+                            Navigator.pop(ctx);
+                            _showUVDialog();
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          )),
     );
   }
 }
