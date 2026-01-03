@@ -43,13 +43,20 @@ class _ControllingPageState extends State<ControllingPage> {
         _statusUV = dashboard['uv']['state'] ?? '';
         _stock = dashboard['stock']['amount_gram'] ?? 0;
         _uvManualActive = dashboard['uv']['manual_active'] ?? false;
-        _temperature = dashboard['environment']['temperature']?.toDouble();
-        _humidity = dashboard['environment']['humidity']?.toDouble();
+
+        if (dashboard['environment'] != null) {
+          _temperature = dashboard['environment']['temperature']?.toDouble();
+          _humidity = dashboard['environment']['humidity']?.toDouble();
+        } else {
+          _temperature = null;
+          _humidity = null;
+        }
+
         _isLoading = false;
       });
       final lastFeed = await _service.getLastFeed();
       setState(() {
-        _lastFeed = lastFeed ?? '';
+        _lastFeed = lastFeed;
       });
     } catch (e) {
       setState(() {
@@ -97,6 +104,53 @@ class _ControllingPageState extends State<ControllingPage> {
       );
     }
     _fetchDashboard();
+  }
+
+  Future<void> _showStockDialog() async {
+    final TextEditingController stockController =
+        TextEditingController(text: _stock.toString());
+
+    await showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Update Stock Pakan'),
+        content: TextField(
+          controller: stockController,
+          keyboardType: TextInputType.number,
+          decoration: const InputDecoration(
+            labelText: 'Jumlah baru (gram)',
+            suffixText: 'gram',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Batal'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final newStock = int.tryParse(stockController.text);
+              if (newStock != null && newStock >= 0) {
+                Navigator.pop(dialogContext);
+                setState(() => _isLoading = true);
+                final result = await _service.updateStock(newStock);
+                setState(() => _isLoading = false);
+
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(result)),
+                  );
+                }
+                _fetchDashboard();
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.cyan),
+            child: const Text('Simpan', style: TextStyle(color: Colors.black)),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -165,13 +219,19 @@ class _ControllingPageState extends State<ControllingPage> {
                                     ),
                                   Card(
                                     color: Colors.cyan,
-                                    child: ListTile(
-                                      title: const Text('Stock Pakan'),
-                                      subtitle: Text('$_stock gram',
-                                          style: const TextStyle(
-                                              color: Colors.white)),
-                                      leading: const Icon(Icons.food_bank,
-                                          color: Colors.green),
+                                    child: InkWell(
+                                      onTap: _showStockDialog,
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: ListTile(
+                                        title: const Text('Stock Pakan'),
+                                        subtitle: Text('$_stock gram',
+                                            style: const TextStyle(
+                                                color: Colors.white)),
+                                        leading: const Icon(Icons.food_bank,
+                                            color: Colors.green),
+                                        trailing: const Icon(Icons.edit,
+                                            color: Colors.white70, size: 20),
+                                      ),
                                     ),
                                   ),
                                 ],

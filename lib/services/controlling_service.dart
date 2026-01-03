@@ -56,4 +56,17 @@ class ControllingService {
     }
     return 'Failed to get last feed';
   }
+
+  Future<String> updateStock(int amount) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/stock'),
+      body: json.encode({'amount_gram': amount}),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      return 'Stock berhasil diupdate';
+    }
+    return 'Gagal update stock';
+  }
 }
